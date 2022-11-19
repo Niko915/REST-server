@@ -31,7 +31,8 @@ const UsuarioSchema = Schema({
     rol:{
         type:String,
         required:[true],
-        enum:['ADMIN_ROL','USER_ROL']
+        // enum:['ADMIN_ROL','USER_ROL'] 
+        //Está comentado porque sinó fai override da validacion en db
     },
     estado:{
         type:Boolean,

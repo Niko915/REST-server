@@ -37,7 +37,7 @@ const usuariosPost =  async(req, res = response) =>{
 
     //verificar si correo existe
     const existeEmail = await Usuario.findOne({correo});
-    if(!existeEmail){
+    if(existeEmail){
         return  res.status(400).json({
             msg:'Ese correo ya está registrado'
         })
