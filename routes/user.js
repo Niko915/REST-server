@@ -1,5 +1,9 @@
 
 const {Router} = require('express');
+const { check } = require('express-validator');
+
+const {validarCampos} = require('../middlewares/validar_campos');
+
 const { usuariosGet,
      usuariosPut, 
      usuariosPost, 
@@ -12,7 +16,13 @@ router.get('/',usuariosGet);
 
 router.put('/:id',usuariosPut); //:id es un parametro de url
 
-router.post('/',usuariosPost);
+router.post('/',[
+     check('nombre','El nombre es obligatorio').not().isEmpty(),
+     check('passwd','La contraseña debe tener mas de 6 caracteres').isLength({min:6}),
+     check('correo','El correo ingresado no tiene el formato correcto').isEmail(),
+     check('rol','No es un rol permitido').isIn(['ADMIN_ROL','USER_ROL']),
+     validarCampos
+],usuariosPost);
 
 router.delete('/',usuariosDelete);
 
