@@ -1,9 +1,10 @@
-const { response } = require("express");
+const { response, json } = require("express");
 const bcryptjs = require('bcryptjs');
 
 const Usuario = require('../models/usuario');
 const { generarJWT } = require("../helpers/generarJWT");
 const { googleVerify } = require("../helpers/google-verify");
+const { DefaultTransporter } = require("google-auth-library");
 
 const login = async (req,res = response)=>{
 
@@ -46,19 +47,50 @@ const login = async (req,res = response)=>{
 }
 
 const googleIdentity = async(req,res=response)=>{
+
     const {id_token} = req.body;
 
     try {
-        const  googleUser = await googleVerify(id_token);
-        
-        res.json({
-            msg:'Ta bueno pa',
-            id_token
-        })
-    } catch (error) {
-        
-    }
+        const  {nombre,img,correo}= await googleVerify(id_token);
+       
+        let usuario = await Usuario.findOne({correo});
 
+        if (!usuario) {
+            //crear usuario
+            const data = {
+                nombre,
+                correo,
+                passwd:':p',
+                rol:DefaultTransporter,
+                img,
+                google:true
+            };
+            usuario = new Usuario(data);
+            await usuario.save();
+        }
+
+        //Si el usuario en DB tiene estado false ("borrado")
+        if (!usuario.estado) {
+            return res.status(401).json({
+                msg:'Hable con el administrador, usuario bloqueado'
+            })
+        }
+
+        //Generar JWT
+        const token = await generarJWT(usuario.id);
+
+        res.json({
+            usuario,
+            token
+        });
+
+    } catch (error) {
+        res.status(400).json({
+        ok:false,
+        msg:'El token no se pudo verificar'
+        })   
+
+    }
 
 
 }
