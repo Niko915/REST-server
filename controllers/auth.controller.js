@@ -3,6 +3,7 @@ const bcryptjs = require('bcryptjs');
 
 const Usuario = require('../models/usuario');
 const { generarJWT } = require("../helpers/generarJWT");
+const { googleVerify } = require("../helpers/google-verify");
 
 const login = async (req,res = response)=>{
 
@@ -42,7 +43,26 @@ const login = async (req,res = response)=>{
         })
     }
 
+}
+
+const googleIdentity = async(req,res=response)=>{
+    const {id_token} = req.body;
+
+    try {
+        const  googleUser = await googleVerify(id_token);
+        
+        res.json({
+            msg:'Ta bueno pa',
+            id_token
+        })
+    } catch (error) {
+        
+    }
+
+
 
 }
 
-module.exports={login} 
+
+
+module.exports={login,googleIdentity} 
