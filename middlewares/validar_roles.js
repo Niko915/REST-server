@@ -1,8 +1,8 @@
 const { response } = require("express");
-const usuario = require("../models/usuario");
 
 
-const esAdminRol = (req, res = response)=>{
+
+const esAdminRol = (req, res = response,next)=>{
    
     if (!req.usuario) {
         return res.status(500).json({
@@ -25,7 +25,7 @@ const esAdminRol = (req, res = response)=>{
 
 const tieneRol = (...roles)=>{
 
-    return(req, res = response)=>{
+    return(req, res = response,next)=>{
         
         if (!req.usuario) {
             return res.status(500).json({
