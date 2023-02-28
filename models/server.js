@@ -47,7 +47,8 @@ class Server{
         //Carga de archivos
         this.app.use(fileUpload({
             useTempFiles : true,
-            tempFileDir : '/tmp/'
+            tempFileDir : '/tmp/',
+            createParentPath:true //OJO CUIDADO si queremos que solo se pueda guardar en carpetas creadas manualmente esta opcion se pone en false (controlar donde se guardan las cosas)
         }));
     }
 
